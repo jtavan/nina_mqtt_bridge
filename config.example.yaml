@@ -1,0 +1,75 @@
+# Example configuration for nina_mqtt_bridge
+
+nina:
+  api_uri: "http://127.0.0.1:1888/v2/api"
+
+mqtt:
+  host: "127.0.0.1"
+  port: 1883
+  username:
+  password:
+  client_id: "nina_mqtt_bridge"
+  keepalive: 60
+  topics:
+    discovery_prefix: "homeassistant"
+    base_topic: "nina"
+    availability_topic: "{base}/availability"
+    command_topic: "{base}/{device}/command"
+    command_error_topic: "{base}/{device}/command/error"
+    command_response_timeout: 10
+
+device_info:
+  device_id: "nina_server"
+  name: "NINA Advanced API"
+  manufacturer: "christian-photo"
+  model: "NINA Advanced API"
+
+devices:
+  application:
+    enabled: true
+    refresh_every: 300
+  camera:
+    enabled: true
+    refresh_every: 30
+  mount:
+    enabled: true
+    refresh_every: 30
+  dome:
+    enabled: false
+    refresh_every: 60
+  filterwheel:
+    enabled: true
+    refresh_every: 60
+  focuser:
+    enabled: true
+    refresh_every: 60
+  rotator:
+    enabled: true
+    refresh_every: 60
+  weather:
+    enabled: true
+    refresh_every: 120
+  sequence:
+    enabled: true
+    refresh_every: 30
+  guider:
+    enabled: true
+    refresh_every: 30
+  safetymonitor:
+    enabled: true
+    refresh_every: 60
+  switch:
+    enabled: true
+    refresh_every: 60
+  flatdevice:
+    enabled: true
+    refresh_every: 60
+  livestack:
+    enabled: true
+    refresh_every: 60
+  most_recent_image:
+    enabled: true
+    refresh_every: 300
+  screenshot:
+    enabled: true
+    refresh_every: 600

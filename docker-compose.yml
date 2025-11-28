@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  nina_mqtt_bridge:
+    build: .
+    container_name: nina_mqtt_bridge
+    restart: unless-stopped
+    volumes:
+      - ./config.yaml:/config/config.yaml:ro
+    environment:
+      - MQTT_USERNAME=${MQTT_USERNAME:-}
+      - MQTT_PASSWORD=${MQTT_PASSWORD:-}
+    networks:
+      - default
