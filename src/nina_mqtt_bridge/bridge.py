@@ -33,6 +33,7 @@ class Bridge:
         self.nina = NINAClient(config.nina.api_uri)
         self.mqtt = MQTTClient(config.mqtt)
         self.scheduler = Scheduler()
+        self.image_scheduler = Scheduler()
         self._publish_queue: queue.Queue[PublishMessage] = queue.Queue()
         self._stop_event = threading.Event()
         self._publisher_thread: Optional[threading.Thread] = None
@@ -45,11 +46,13 @@ class Bridge:
         self._start_publisher()
         self._schedule_polls()
         self.scheduler.start()
+        self.image_scheduler.start()
 
     def stop(self) -> None:
         logger.info("Stopping bridge")
         # Stop scheduling new work but allow publisher to drain queued messages.
         self.scheduler.stop()
+        self.image_scheduler.stop()
         self._publish_all_device_availability("OFF")
         self._publish_availability("OFF")
         self._stop_event.set()
@@ -120,17 +123,23 @@ class Bridge:
             if not device_cfg.enabled:
                 logger.info("Device %s disabled; skipping", device_name)
                 continue
-            if device_name in IMAGE_ENDPOINTS or device_name in IMAGE_DEVICES:
+            if self._is_image_device(device_name):
+                scheduler = self.image_scheduler
                 task_fn = partial(self._poll_image, device_name)
             else:
+                scheduler = self.scheduler
                 task_fn = partial(self._poll_device, device_name)
-            self.scheduler.add_task(
+            scheduler.add_task(
                 ScheduledTask(
                     name=f"poll_{device_name}",
                     interval=float(device_cfg.refresh_every),
                     fn=task_fn,
                 )
             )
+
+    @staticmethod
+    def _is_image_device(device_name: str) -> bool:
+        return device_name in IMAGE_ENDPOINTS or device_name in IMAGE_DEVICES
 
     def _poll_device(self, device: str) -> None:
         if device not in DEVICE_ENDPOINTS:
