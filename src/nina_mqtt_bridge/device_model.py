@@ -443,7 +443,10 @@ DEVICE_SENSORS: Dict[str, Dict[str, SensorDef]] = {
         "rain_rate": SensorDef(name="Rain Rate", icon="mdi:weather-pouring"),
         "sky_brightness": SensorDef(name="Sky Brightness", icon="mdi:weather-night"),
         "sky_quality": SensorDef(
-            name="Sky Quality", icon="mdi:weather-night-partly-cloudy"
+            name="Sky Quality",
+            unit="mag/arcsec^2",
+            state_class="measurement",
+            icon="mdi:weather-night-partly-cloudy",
         ),
         "sky_temperature": SensorDef(
             name="Sky Temperature",
