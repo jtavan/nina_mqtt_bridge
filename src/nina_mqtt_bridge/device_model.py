@@ -471,7 +471,12 @@ DEVICE_SENSORS: Dict[str, Dict[str, SensorDef]] = {
             state_class="measurement",
             icon="mdi:compass",
         ),
-        "wind_gust": SensorDef(name="Wind Gust", icon="mdi:weather-windy"),
+        "wind_gust": SensorDef(
+            name="Wind Gust",
+            unit="m/s",
+            state_class="measurement",
+            icon="mdi:weather-windy",
+        ),
         "wind_speed": SensorDef(
             name="Wind Speed",
             unit="m/s",
@@ -528,6 +533,16 @@ def _append_switches(status: Dict[str, Any], values: Dict[str, Any]) -> None:
         values[f"writable_switch_{idx}_targetvalue"] = entry.get("TargetValue")
 
 
+def _append_filterwheel(status: Dict[str, Any], values: Dict[str, Any]) -> None:
+    resp = status.get("Response", {}) if isinstance(status, dict) else {}
+    selected = resp.get("SelectedFilter") or {}
+    if isinstance(selected, dict):
+        if "Name" in selected:
+            values["selected_filter_name"] = selected.get("Name")
+        if "Id" in selected:
+            values["selected_filter_id"] = selected.get("Id")
+
+
 def extract_state_values(device: str, status: Dict[str, Any]) -> Dict[str, Any]:
     """
     Flatten API responses into a dictionary of requested variables.
@@ -539,10 +554,14 @@ def extract_state_values(device: str, status: Dict[str, Any]) -> Dict[str, Any]:
 
     if device == "switch":
         _append_switches(status, values)
+    if device == "filterwheel":
+        _append_filterwheel(status, values)
 
     lookup = _build_lookup(status or {})
 
     for var, definition in DEVICE_SENSORS.get(device, {}).items():
+        if var in values:
+            continue
         for candidate in (definition.source or []) + [var]:
             norm = _normalize(candidate)
             if norm in lookup:
