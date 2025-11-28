@@ -6,7 +6,7 @@ A lightweight Python bridge that polls the NINA Advanced API and exposes device 
 - Polls NINA Advanced API endpoints on a configurable cadence for each device class (camera, mount, focuser, filter wheel, weather, sequence, etc.).
 - Publishes per-variable sensor states under `{base}/{device}/{variable}` with retained payloads and per-device availability topics `{base}/{device}/availability` (LWT aware). Sensors include `expire_after` set to ~2.2× the configured refresh interval.
 - Exposes image endpoints (`livestack`, `most_recent_image`, `screenshot`) as MQTT cameras carrying JPEG binary payloads; image entities do **not** expire.
-- Listens for MQTT commands on `{base}/{device}/command` for supported write actions (sequence start/stop/reset, mount home/park/unpark/tracking mode, screenshots).
+- (Not yet implemented) Listens for MQTT commands on `{base}/{device}/command` for supported write actions (sequence start/stop/reset, mount home/park/unpark/tracking mode, screenshots).
 - Publishes Home Assistant discovery messages under the configured discovery prefix.
 
 ## Requirements
